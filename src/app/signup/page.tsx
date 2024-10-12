@@ -1,29 +1,22 @@
 "use client";
 import { useState } from 'react';
 import axios from 'axios';
+import router from 'next/router';
 
 export default function SignupPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-  });
+  const [formData, setFormData] = useState({ email: '', password: '', firstName: '', lastName: '', phoneNumber: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      // Update the endpoint path to match the correct location
       const response = await axios.post('/api/signup', formData);
-      
       if (response.status === 201) {
         alert('Signup successful');
       }
     } catch (error) {
-      alert('Signup failed');
       console.error('Error during signup:', error);
+      alert('Signup failed');
     }
   };
 
@@ -58,13 +51,13 @@ export default function SignupPage() {
         required
       />
       <input
-        type="tel"
+        type="text"
         value={formData.phoneNumber}
         onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
         placeholder="Phone Number"
         required
       />
-      <button type="submit">Signup</button>
+      <button type="submit">Sign Up</button>
     </form>
   );
 }

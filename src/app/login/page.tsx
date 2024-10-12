@@ -1,59 +1,67 @@
 "use client" 
-import axios from 'axios';
-import styles from "./../page.module.css"
-import React,{ useState } from 'react';
+// import axios from 'axios';
+// import styles from "./../page.module.css"
+import React,{ FormEvent, useState } from 'react';
+import { Typography, Stack, TextField, Button, Link } from "@mui/material";
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const router = useRouter();
+  const [formData, setFormData] = useState({ email: '', password: '' });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      console.log('Submitting form:', formData);  // ตรวจสอบค่าก่อนส่ง
-      const response = await axios.post('/api/login', formData);
-  
-      if (response.status === 200) {
-        // ถ้าการเข้าสู่ระบบสำเร็จ ให้เก็บ token
-        localStorage.setItem('authToken', response.data.token); 
-        alert('Login successful');
-      } else {
-        console.error('Login failed:', response.data);
-        alert('Invalid login');
-      }
-    } catch (error: any) {
-      console.error('Error during login:', error?.response?.data || error.message); // เพิ่มการตรวจสอบข้อผิดพลาด
-      alert(error?.response?.data?.message || 'Error during login');
-    }
     
+    try {
+      const res: LoginResponse = await login('credentials', { 
+        redirect: false, 
+        email: formData.email, 
+        password: formData.password 
+      });
+      if (!res?.error) {
+        alert('Login successful');
+        router.push('/')
+
+      } else {
+        alert('Login failed: ' + res.error);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Login failed');
+    }
   };
 
   return (
-    <div className={styles.formContainer}>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <TextField
+        type="email"
+        value={formData.email}
+        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        placeholder="Email"
+        required
+        fullWidth
+      />
+      <TextField
+        type="password"
+        value={formData.password}
+        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+        placeholder="Password"
+        required
+        fullWidth
+      />
+      <Button type="submit" variant="contained" color="primary">
+        Login
+      </Button>
+    </form>
   );
+}
+
+async function login(arg0: string, arg1: { redirect: boolean; email: string; password: string; }): Promise<LoginResponse> {
+  
+  return new Promise((resolve) => {
+    setTimeout(() => {
+     
+      resolve({}); 
+    }, 1000);
+  });
 }
